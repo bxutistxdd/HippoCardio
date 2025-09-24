@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <!--<link rel="stylesheet" href="css/perfil.css"> -->
+
+    <style>
+        /* ======== Estilos generales ======== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #FAFAFA;
+    color: #333;
+}
+
+header {
+    background-color: #D32F2F; /* Rojo principal */
+    color: #FFFFFF;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+/* ======== Layout principal ======== */
+main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ======== Mensajes ======== */
+#success-message {
+    background-color: #C8E6C9;
+    border: 1px solid #388E3C;
+    color: #2E7D32;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* ======== Contenedor principal ======== */
+.flex {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .flex {
+        flex-direction: row;
+    }
+}
+
+/* ======== Menú lateral ======== */
+aside {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+aside h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #D32F2F;
+}
+
+aside a {
+    display: block;
+    background-color: #D32F2F;
+    color: #FFF;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+aside a:hover {
+    background-color: #B71C1C;
+}
+
+/* ======== Sección principal ======== */
+section {
+    flex: 1;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ======== Info de usuario ======== */
+section h3 {
+    font-size: 1.3rem;
+    color: #D32F2F;
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #EEE;
+    font-size: 1rem;
+}
+
+/* ======== Botón de logout ======== */
+button {
+    background-color: #D32F2F;
+    border: none;
+    padding: 12px 20px;
+    color: #FFF;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #B71C1C;
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Mi Perfil
+        </h2>
+    </header>
+
+    <main class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Mensaje de éxito -->
+        <div id="success-message" class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded"
+            style="display: none;">
+            <!-- Mensaje de éxito dinámico -->
+            <p id="success-text">Operación exitosa</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Menú lateral -->
+            <aside class="w-full md:w-1/4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Formularios</h3>
+                <a th:href="@{/formulario/diabetes}" class="btn btn-primary">Formulario de Diabetes</a>
+                <a href="/formularios/ets" class="btn btn-primary">Formulario de ETS</a>
+                <a href="/formulario/hipertension" class="btn btn-primary">Formulario de Hipertensión</a>
+                <a href="/formularios/obesidad" class="btn btn-primary">Formulario de Obesidad</a>
+            </aside>
+
+            <!-- Contenido principal -->
+            <section class="w-full md:w-3/4 space-y-6">
+                <!-- Información del usuario -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">Información de la Cuenta</h3>
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+    <li><strong>Nombre:</strong> <span th:text="${usuario.nombre}">Nombre</span></li>
+    <li><strong>Apellido:</strong> <span th:text="${usuario.apellido}">Apellido</span></li>
+    <li><strong>Correo:</strong> <span th:text="${usuario.correo}">correo@example.com</span></li>
+    <li><strong>Rol:</strong> <span th:text="${usuario.rol}">Usuario</span></li>
+</ul>
+
+                </div>
+
+                <!-- Mostrar el formulario correspondiente -->
+                <div id="formulario-content">
+                    <!-- Aquí iría el formulario dinámico dependiendo de la selección del usuario -->
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="mt-6 flex space-x-4">
+                    <form method="POST" action="/logout">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                            Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

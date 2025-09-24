@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hippocardio - Iniciar sesión</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #FAFAFA; 
+            color: #333; 
+        }
+
+        header {
+            background-color: #D32F2F; 
+            color: #FFFFFF; 
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            padding-top: 15px;
+            margin-top: 25px;
+            font-size: 3rem;
+            margin: 0;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            margin: 5px 0 0;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 3rem;
+            color: #D32F2F;
+            margin-top: 20px;
+        }
+
+        h6 {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .cuadro-registro {
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            max-width: 400px;
+            margin: 30px auto;
+        }
+
+        .cuadro-registro h4 {
+            text-align: center;
+            color: #B71C1C;
+            margin-bottom: 20px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 1rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CCC;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        a {
+            color: #D32F2F;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #D32F2F;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #B71C1C;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hippocardio</h1>
+        <h2>Cuidando tu salud</h2>
+    </header>
+
+    <main>
+        <h3>Iniciar Sesión</h3>
+        <h6>Accede a tu cuenta para continuar</h6>
+
+        <div class="cuadro-registro">
+            <h4>Formulario de acceso</h4>
+            <form method="POST" action="/login">
+                <div>
+                    <label for="email">Correo electrónico</label>
+                    <input id="email" type="email" name="email" required autofocus>
+                </div>
+
+                <div>
+                    <label for="password">Contraseña</label>
+                    <input id="password" type="password" name="password" required>
+                </div>
+
+                <div>
+                    <label>
+                        <input type="checkbox" name="remember"> Recordarme
+                    </label>
+                </div>
+
+                <div>
+                    <a href="/recuperar-password">¿Olvidaste tu contraseña?</a>
+                    <button type="submit">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

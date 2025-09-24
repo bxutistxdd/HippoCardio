@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Diabetes</title>
+    <link rel="stylesheet" th:href="@{/css/formularios.css}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #FAFAFA;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #FFFFFF;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #D32F2F;
+            margin-bottom: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #D32F2F;
+        }
+
+        form input, 
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #DDD;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        form input:focus,
+        form select:focus {
+            outline: none;
+            border-color: #D32F2F;
+            box-shadow: 0 0 4px rgba(211, 47, 47, 0.4);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #D32F2F;
+            border: none;
+            color: #FFF;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #B71C1C;
+        }
+
+        /* Mensajes */
+        .success {
+            background-color: #C8E6C9;
+            border: 1px solid #388E3C;
+            color: #2E7D32;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .error {
+            background-color: #FFCDD2;
+            border: 1px solid #C62828;
+            color: #B71C1C;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .error ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .btn-volver {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #757575; /* gris neutral para diferenciarlo */
+    color: #FFF;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color .25s ease;
+}
+
+.btn-volver:hover {
+    background-color: #424242;
+}
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Formulario de Diabetes</h2>
+
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <form th:action="@{/formulario/diabetes}" method="post" th:object="${diabetesForm}">
+
+        <div th:if="${#fields.hasErrors('*')}" class="error">
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" th:field="*{nombre}" required>
+
+        <label for="edad">Edad:</label>
+        <input type="number" th:field="*{edad}" required>
+
+        <label for="correo">Correo:</label>
+        <input type="email" th:field="*{correo}" required>
+
+        <label for="tipo_diabetes">Tipo de diabetes:</label>
+        <select th:field="*{tipoDiabetes}" required>
+            <option value="">Selecciona un tipo</option>
+            <option value="Tipo 1">Tipo 1</option>
+            <option value="Tipo 2">Tipo 2</option>
+            <option value="Gestacional">Gestacional</option>
+        </select>
+
+        <button type="submit">Enviar</button>
+
+        <a href="/perfil" class="btn-volver">Volver a mi perfil</a>
+
+    </form>
+</div>
+</body>
+</html>
