@@ -3,53 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard | Administración de Salud</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        body { margin: 0; font-family: Arial, sans-serif; background-color: #F4F6F8; color: #333; }
-        .container { max-width: 1200px; margin: 30px auto; padding: 20px; }
-        header { background-color: #D32F2F; color: #FFF; padding: 20px; text-align: center; border-radius: 10px; box-shadow: 0px 3px 6px rgba(0,0,0,0.2); position: relative; }
-        header h2 { margin: 0; font-size: 2rem; }
-        .logout-btn { position: absolute; top: 15px; right: 20px; background-color: #FFF; color: #D32F2F; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; text-decoration: none; cursor: pointer; transition: all 0.3s ease; }
-        .logout-btn:hover { background-color: #B71C1C; color: #FFF; }
-        form { background-color: #FFF; padding: 25px; margin-top: 25px; border-radius: 12px; box-shadow: 0px 3px 6px rgba(0,0,0,0.1); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; }
+        /* ================================================= */
+        /* 🎨 PALETA DE COLORES (VERDE PETRÓLEO/TEAL) */
+        /* ================================================= */
+        :root {
+            /* Verde Petróleo / Teal para la salud y la estabilidad */
+            --color-primary: #00796B; /* Teal Oscuro Estándar */
+            --color-primary-dark: #004D40; /* Teal muy oscuro */
+            --color-bg-light: #e0f2f1; /* Fondo extra ligero para contraste */
+            --color-card-bg: #ffffff;
+            --color-text-dark: #263238;
+            --color-text-label: #546e7a;
+            --color-border: #b2ebf2;
+            --color-accent: #ffb300; /* Amarillo para acentuar botones clave (PDF/Logout) */
+            --color-error: #f44336;
+        }
+
+        /* ================================================= */
+        /* 🌎 ESTILOS GENERALES Y LAYOUT */
+        /* ================================================= */
+        body { 
+            margin: 0; 
+            font-family: 'Roboto', 'Segoe UI', sans-serif; 
+            background-color: var(--color-bg-light); 
+            color: var(--color-text-dark); 
+        }
+        .container { 
+            max-width: 1300px; 
+            margin: 0px auto 50px auto; 
+            padding: 20px; 
+        }
+
+        /* ================================================= */
+        /* 🔝 ENCABEZADO Y CERRAR SESIÓN */
+        /* ================================================= */
+        header { 
+            background-color: var(--color-primary); 
+            color: #FFF; 
+            padding: 30px 20px; 
+            text-align: center; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); 
+            position: relative; 
+            margin-bottom: 25px;
+        }
+        header h2 { 
+            margin: 0; 
+            font-size: 2.2rem; 
+            font-weight: 500;
+        }
+        .logout-btn { 
+            position: absolute; 
+            top: 25px; 
+            right: 25px; 
+            background-color: var(--color-accent); 
+            color: var(--color-text-dark); 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            text-decoration: none; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        .logout-btn:hover { 
+            background-color: #ffc107; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ================================================= */
+        /* ⚙️ FORMULARIO DE FILTROS (GRID) */
+        /* ================================================= */
+        form { 
+            background-color: var(--color-card-bg); 
+            padding: 30px; 
+            margin-top: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 25px; 
+        }
+        @media (max-width: 1000px) {
+            form {
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr; 
+            }
+        }
+
         .form-group { display: flex; flex-direction: column; }
-        form label { font-weight: bold; color: #444; margin-bottom: 6px; font-size: 0.95rem; }
-        form input, form select { width: 100%; padding: 10px; border: 1px solid #CCC; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
-        form input:focus, form select:focus { outline: none; border-color: #D32F2F; box-shadow: 0 0 5px rgba(211,47,47,0.3); }
-        .form-actions { grid-column: 1 / -1; text-align: center; margin-top: 10px; }
-        form button { padding: 12px 25px; background-color: #D32F2F; color: #FFF; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease; }
-        form button:hover { background-color: #B71C1C; }
-        h3 { margin-top: 35px; color: #D32F2F; font-size: 1.4rem; border-bottom: 2px solid #EEE; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        h3 a { font-size: 0.8rem; background-color: #D32F2F; color: #FFF; padding: 5px 10px; border-radius: 5px; text-decoration: none; }
-        h3 a:hover { background-color: #B71C1C; }
-        ul { list-style: none; padding: 0; margin-top: 10px; }
-        ul li { background-color: #FFF; padding: 12px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+        form label { 
+            font-weight: 600; 
+            color: var(--color-text-label); 
+            margin-bottom: 8px; 
+            font-size: 0.95rem; 
+        }
+        
+        form input, 
+        form select { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid var(--color-border);
+            border-radius: 10px; 
+            font-size: 1rem; 
+            transition: all 0.3s ease;
+            box-sizing: border-box; 
+            background-color: #fcfcfc;
+        }
+        form input:focus, 
+        form select:focus { 
+            outline: none; 
+            border-color: var(--color-primary); 
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.2); 
+            background-color: var(--color-card-bg);
+        }
+        
+        .form-actions { 
+            grid-column: 1 / -1; 
+            text-align: center; 
+            margin-top: 15px; 
+        }
+        form button { 
+            padding: 14px 30px; 
+            background-color: var(--color-primary); 
+            color: #FFF; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 1.05rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+        form button:hover { 
+            background-color: var(--color-primary-dark);
+            transform: translateY(-1px); 
+        }
+
+        /* ================================================= */
+        /* 📊 RESULTADOS Y TARJETAS DE DATOS (NUEVO) */
+        /* ================================================= */
+        h3 { 
+            margin-top: 40px; 
+            color: var(--color-primary-dark); 
+            font-size: 1.6rem; 
+            border-bottom: 2px solid var(--color-border); 
+            padding-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: 600;
+        }
+        h3 i {
+            margin-right: 10px;
+            color: var(--color-primary);
+        }
+
+        .pdf-btn { 
+            font-size: 0.9rem; 
+            background-color: var(--color-accent); 
+            color: var(--color-text-dark); 
+            padding: 8px 15px; 
+            border-radius: 8px; 
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+        .pdf-btn:hover { 
+            background-color: #ffc107;
+        }
+        
+        ul { list-style: none; padding: 0; margin-top: 15px; }
+
+        /* Estilo de Tarjeta de Resultado */
+        ul li { 
+            background-color: var(--color-card-bg); 
+            padding: 15px 20px; 
+            margin-bottom: 12px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+            font-size: 0.95rem; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-left: 6px solid var(--color-primary); /* Barra de color destacada */
+            transition: transform 0.2s ease;
+        }
+        ul li:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Contenido y Campos de datos dentro de la tarjeta */
+        .data-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; 
+            flex-grow: 1;
+        }
+
+        .data-field {
+            font-weight: 500;
+            color: var(--color-text-dark);
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .data-field strong {
+            font-weight: 700;
+            color: var(--color-primary-dark); 
+            margin-left: 5px;
+        }
+
+        .data-field i {
+            color: var(--color-primary);
+            margin-right: 5px;
+        }
+        
+        /* Acciones rápidas (Editar/Eliminar) */
+        .data-actions {
+            margin-left: 20px;
+            display: flex;
+            gap: 10px;
+            /* Asegura que los botones se vean bien en móviles */
+            margin-top: 5px; 
+        }
+        @media (max-width: 768px) {
+            .data-actions {
+                margin-left: auto; /* Mueve las acciones a la derecha si no hay suficiente espacio */
+            }
+        }
+
+        .action-btn {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .edit-btn {
+            background-color: #ffe082; 
+            color: var(--color-text-dark);
+        }
+        .edit-btn:hover {
+            background-color: #ffc107;
+        }
+
+        .delete-btn {
+            background-color: #ffcdd2; 
+            color: var(--color-error);
+        }
+        .delete-btn:hover {
+            background-color: #ef9a9a;
+        }
+        .action-btn i {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
         <h2>Admin Dashboard</h2>
-        <a href="/" class="logout-btn">Cerrar sesión</a>
+        <a th:href="@{/}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
     </header>
 
-    <!-- Formulario de filtros -->
     <form method="GET" th:action="@{/admin/dashboard}">
         <div class="form-group">
             <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre" th:value="${nombre}">
+            <input type="text" name="nombre" id="nombre" th:value="${nombre}" placeholder="Nombre del paciente">
         </div>
 
         <div class="form-group">
             <label for="edad">Edad:</label>
-            <input type="number" name="edad" id="edad" th:value="${edad}">
+            <input type="number" name="edad" id="edad" th:value="${edad}" placeholder="Ej: 45">
         </div>
 
         <div class="form-group">
             <label for="tipo_diabetes">Tipo de Diabetes:</label>
             <select name="tipoDiabetes" id="tipo_diabetes">
-                <option value="">Selecciona un tipo</option>
+                <option value="">Cualquiera</option>
                 <option value="Tipo 1" th:selected="${tipoDiabetes == 'Tipo 1'}">Tipo 1</option>
                 <option value="Tipo 2" th:selected="${tipoDiabetes == 'Tipo 2'}">Tipo 2</option>
                 <option value="Gestacional" th:selected="${tipoDiabetes == 'Gestacional'}">Gestacional</option>
@@ -59,7 +307,7 @@
         <div class="form-group">
             <label for="tipo_ets">Tipo de ETS:</label>
             <select name="tipoEts" id="tipo_ets">
-                <option value="">Selecciona un tipo</option>
+                <option value="">Cualquiera</option>
                 <option value="VIH" th:selected="${tipoEts == 'VIH'}">VIH</option>
                 <option value="Sífilis" th:selected="${tipoEts == 'Sífilis'}">Sífilis</option>
                 <option value="Gonorrea" th:selected="${tipoEts == 'Gonorrea'}">Gonorrea</option>
@@ -69,68 +317,180 @@
 
         <div class="form-group">
             <label for="presion_arterial">Presión Arterial:</label>
-            <input type="text" name="presionArterial" id="presion_arterial" th:value="${presionArterial}">
+            <input type="text" name="presionArterial" id="presion_arterial" th:value="${presionArterial}" placeholder="Ej: 130/85">
         </div>
 
         <div class="form-group">
             <label for="peso">Peso (kg):</label>
-            <input type="number" name="peso" id="peso" th:value="${peso}">
+            <input type="number" name="peso" id="peso" th:value="${peso}" placeholder="Ej: 80">
         </div>
 
         <div class="form-group">
-            <label for="altura">Altura (cm):</label>
-            <input type="number" name="altura" id="altura" th:value="${altura}">
+            <label for="altura">Altura (m):</label>
+            <input type="number" name="altura" id="altura" th:value="${altura}" placeholder="Ej: 1.75">
         </div>
 
         <div class="form-group">
             <label for="imc">IMC:</label>
-            <input type="number" step="0.1" name="imc" id="imc" th:value="${imc}">
+            <input type="number" step="0.1" name="imc" id="imc" th:value="${imc}" placeholder="Ej: 25.5">
         </div>
 
         <div class="form-actions">
-            <button type="submit">Filtrar</button>
+            <button type="submit"><i class="fas fa-filter"></i> Aplicar Filtros</button>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" id="btnEnviarMasivo"><i class="fas fa-filter"></i> Enviar correos masivos</button>
         </div>
     </form>
 
-    <!-- Resultados con botón PDF -->
-    <h3>Formularios de Diabetes: 
-        <a th:href="@{/admin/reporte/diabetes}" target="_blank">Descargar PDF</a>
+    <h3><i class="fas fa-candy-cane"></i> Formularios de Diabetes: 
+        <a th:href="@{/admin/pdf/diabetes}" target="_blank" class="pdf-btn"><i class="fas fa-file-pdf"></i> PDF REPORTE GENERAL</a>
     </h3>
     <ul>
         <li th:each="formulario : ${diabetesList}">
-            <span th:text="${formulario.nombre}"></span> - <span th:text="${formulario.tipoDiabetes}"></span>
+            <div class="data-content">
+                <div class="data-field">
+                    <i class="fas fa-user-tag"></i> Paciente: 
+                    <strong><span th:text="${formulario.nombre}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-birthday-cake"></i> Edad: 
+                    <strong><span th:text="${formulario.edad}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-syringe"></i> Tipo: 
+                    <strong><span th:text="${formulario.tipoDiabetes}"></span></strong>
+                </div>
+            </div>
+            <div class="data-actions">
+                <a th:href="@{/admin/editar/diabetes/{id}(id=${formulario.id})}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{/admin/eliminar/diabetes/{id}(id=${formulario.id})}" class="action-btn delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
         </li>
     </ul>
 
-    <h3>Formularios de ETS: 
-        <a th:href="@{/admin/reporte/ets}" target="_blank">Descargar PDF</a>
+    <h3><i class="fas fa-venus-mars"></i> Formularios de ETS: 
+        <!-- <a th:href="@{/admin/pdf/ets}" target="_blank" class="pdf-btn"><i class="fas fa-file-pdf"></i> PDF</a> -->
     </h3>
     <ul>
         <li th:each="formulario : ${etsList}">
-            <span th:text="${formulario.nombre}"></span> - <span th:text="${formulario.tipoEts}"></span>
+            <div class="data-content">
+                <div class="data-field">
+                    <i class="fas fa-user-tag"></i> Paciente: 
+                    <strong><span th:text="${formulario.nombre}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-microscope"></i> Tipo: 
+                    <strong><span th:text="${formulario.tipoEts}"></span></strong>
+                </div>
+            </div>
+            <div class="data-actions">
+                <a th:href="@{/admin/editar/ets/{id}(id=${formulario.id})}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{/admin/eliminar/ets/{id}(id=${formulario.id})}" class="action-btn delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
         </li>
     </ul>
 
-    <h3>Formularios de Hipertensión: 
-        <a th:href="@{/admin/reporte/hipertension}" target="_blank">Descargar PDF</a>
+    <h3><i class="fas fa-heartbeat"></i> Formularios de Hipertensión: 
+        <!-- <a th:href="@{/admin/pdf/hipertension}" target="_blank" class="pdf-btn"><i class="fas fa-file-pdf"></i> PDF</a> -->
     </h3>
     <ul>
         <li th:each="formulario : ${hipertensionList}">
-            <span th:text="${formulario.nombre}"></span> - 
-            <span th:text="${formulario.presionArterial}"></span> / 
-            <span th:text="${formulario.peso}"></span> kg / 
-            <span th:text="${formulario.altura}"></span> cm
+            <div class="data-content">
+                <div class="data-field">
+                    <i class="fas fa-user-tag"></i> Paciente: 
+                    <strong><span th:text="${formulario.nombre}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-stethoscope"></i> P. Arterial: 
+                    <strong><span th:text="${formulario.presionArterial}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-weight"></i> Peso: 
+                    <strong><span th:text="${formulario.peso}"></span> kg</strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-ruler-vertical"></i> Altura: 
+                    <strong><span th:text="${formulario.altura}"></span> m</strong>
+                </div>
+            </div>
+            <div class="data-actions">
+                <a th:href="@{/admin/editar/hipertension/{id}(id=${formulario.id})}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{/admin/eliminar/hipertension/{id}(id=${formulario.id})}" class="action-btn delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
         </li>
     </ul>
 
-    <h3>Formularios de Obesidad: 
-        <a th:href="@{/admin/reporte/obesidad}" target="_blank">Descargar PDF</a>
+    <h3><i class="fas fa-weight-scale"></i> Formularios de Obesidad: 
+        <!-- <a th:href="@{/admin/pdf/obesidad}" target="_blank" class="pdf-btn"><i class="fas fa-file-pdf"></i> PDF</a> -->
     </h3>
     <ul>
         <li th:each="formulario : ${obesidadList}">
-            <span th:text="${formulario.nombre}"></span> - IMC: <span th:text="${formulario.imc}"></span>
+            <div class="data-content">
+                <div class="data-field">
+                    <i class="fas fa-user-tag"></i> Paciente: 
+                    <strong><span th:text="${formulario.nombre}"></span></strong>
+                </div>
+                <div class="data-field">
+                    <i class="fas fa-ruler-combined"></i> IMC: 
+                    <strong><span th:text="${formulario.imc}"></span></strong>
+                </div>
+            </div>
+            <div class="data-actions">
+                <a th:href="@{/admin/editar/obesidad/{id}(id=${formulario.id})}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{/admin/eliminar/obesidad/{id}(id=${formulario.id})}" class="action-btn delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
         </li>
     </ul>
 </div>
+
+<script>
+document.getElementById("btnEnviarMasivo").addEventListener("click", async () => {
+    try {
+        // 1️⃣ Obtener correos de la base de datos
+        const response = await fetch("/email/usuarios/emails");
+        const destinatarios = await response.json();
+        console.log("Destinatarios obtenidos:", destinatarios);
+
+        // 2️⃣ Preparar payload
+        const payload = {
+            destinatarios: destinatarios,
+            asunto: "HIPPOCARDIO - Recuerda ingresar a HippoCardio para seguir de cerca tu salud",
+            mensaje: "Hola, Recuerda cumplir tus objetivos con HippoCardio. Cada día que registras tus avances es un paso más hacia una vida más sana y equilibrada.Ingresa a la app y revisa tu progreso, mantén el control de tu presión arterial, ritmo cardíaco y hábitos diarios. ¡Tu salud merece tu atención constante! El equipo de HippoCardio."
+        };
+
+        // 3️⃣ Enviar correos masivos
+        const sendResponse = await fetch("/email/masivo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await sendResponse.text();
+        alert(result);
+
+    } catch (error) {
+        alert("Error al enviar correos: " + error);
+    }
+});
+</script>
+
 </body>
 </html>

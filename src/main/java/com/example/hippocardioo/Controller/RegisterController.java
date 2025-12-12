@@ -6,14 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-//import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class RegisterController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Mostrar formulario de registro
     @GetMapping("/register")
@@ -39,19 +41,22 @@ public class RegisterController {
         }
 
         // 2. Validar que no exista el correo
-      Usuario existingUser = usuarioRepository.findByCorreo(email);
-if (existingUser != null) {
-    model.addAttribute("error", "El correo ya está registrado.");
-    return "auth/register";
-}
-
+        Usuario existingUser = usuarioRepository.findByCorreo(email);
+        if (existingUser != null) {
+            model.addAttribute("error", "El correo ya está registrado.");
+            return "auth/register";
+        }
 
         // 3. Crear nuevo usuario
         Usuario usuario = new Usuario();
         usuario.setNombre(name);
         usuario.setApellido(lastname);
         usuario.setCorreo(email);
-        usuario.setPassword(password); // ⚠️ Idealmente encriptar con BCrypt
+
+        // ✅ Encriptar la contraseña antes de guardar
+        String passEncriptada = passwordEncoder.encode(password);
+        usuario.setPassword(passEncriptada);
+
         usuario.setRol("USER"); // Rol por defecto
 
         // 4. Guardar en BD

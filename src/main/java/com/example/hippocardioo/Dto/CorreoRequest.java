@@ -4,16 +4,20 @@ import java.util.List;
 
 public class CorreoRequest {
 
-    private List<String> destinatarios; // lista de destinatarios (soporta uno o varios)
+    // Lista de destinatarios con sus datos personalizados
+    private List<DestinatarioPersonalizado> destinatarios;
     private String asunto;
-    private String contenido; // puede ser texto plano o HTML según el caso
+    private String contenidoHTML; // La plantilla HTML con marcadores (e.g., "Hola {{nombre}}")
+
+    // Constructor vacío
+    public CorreoRequest() {}
 
     // Getters y Setters
-    public List<String> getDestinatarios() {
+    public List<DestinatarioPersonalizado> getDestinatarios() {
         return destinatarios;
     }
 
-    public void setDestinatarios(List<String> destinatarios) {
+    public void setDestinatarios(List<DestinatarioPersonalizado> destinatarios) {
         this.destinatarios = destinatarios;
     }
 
@@ -25,11 +29,11 @@ public class CorreoRequest {
         this.asunto = asunto;
     }
 
-    public String getContenido() {
-        return contenido;
+    public String getContenidoHTML() {
+        return contenidoHTML;
     }
 
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
+    public void setContenidoHTML(String contenidoHTML) {
+        this.contenidoHTML = contenidoHTML;
     }
 }

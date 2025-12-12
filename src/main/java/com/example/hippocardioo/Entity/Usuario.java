@@ -75,4 +75,9 @@ public class Usuario {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    public static Object findById(Long usuarioId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    }
 }

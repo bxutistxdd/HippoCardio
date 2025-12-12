@@ -1,7 +1,7 @@
 package com.example.hippocardioo.Controller;
 
 import com.example.hippocardioo.Services.DashboardService;
-import com.example.hippocardioo.Services.ReportePdfService;
+
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,11 +17,8 @@ import java.io.ByteArrayInputStream;
 public class AdminController {
 
     private final DashboardService dashboardService;
-    private final ReportePdfService reportePdfService;
-
-    public AdminController(DashboardService dashboardService, ReportePdfService reportePdfService) {
+    public AdminController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
-        this.reportePdfService = reportePdfService;
     }
 
     @GetMapping("/admin/dashboard")
@@ -65,30 +62,5 @@ public class AdminController {
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
-    }
-
-    // ===================== ENDPOINTS PDF =====================
-    @GetMapping("/admin/reporte/diabetes")
-    public ResponseEntity<InputStreamResource> descargarReporteDiabetes() {
-        ByteArrayInputStream bis = reportePdfService.generarReporteDiabetes();
-        return crearResponsePdf(bis, "Reporte_Diabetes.pdf");
-    }
-
-    @GetMapping("/admin/reporte/ets")
-    public ResponseEntity<InputStreamResource> descargarReporteEts() {
-        ByteArrayInputStream bis = reportePdfService.generarReporteEts();
-        return crearResponsePdf(bis, "Reporte_ETS.pdf");
-    }
-
-    @GetMapping("/admin/reporte/hipertension")
-    public ResponseEntity<InputStreamResource> descargarReporteHipertension() {
-        ByteArrayInputStream bis = reportePdfService.generarReporteHipertension();
-        return crearResponsePdf(bis, "Reporte_Hipertension.pdf");
-    }
-
-    @GetMapping("/admin/reporte/obesidad")
-    public ResponseEntity<InputStreamResource> descargarReporteObesidad() {
-        ByteArrayInputStream bis = reportePdfService.generarReporteObesidad();
-        return crearResponsePdf(bis, "Reporte_Obesidad.pdf");
     }
 }

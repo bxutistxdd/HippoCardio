@@ -1,74 +1,82 @@
 package com.example.hippocardioo.Services;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
+// Importaciones de SendGrid
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.Personalization;
+// Importación del DTO
+import com.example.hippocardioo.Dto.DestinatarioPersonalizado; 
 
-import java.io.File;
+import org.springframework.stereotype.Service;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CorreoService {
 
-    private final JavaMailSender mailSender;
+    // **NOTA:** La clave se obtiene de la variable de entorno SENDGRID_API_KEY
+    private final SendGrid sendGrid = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+    private final Email fromEmail = new Email("remitente@tudominio.com"); // Reemplaza con tu correo verificado
 
-    public CorreoService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    /**
-     * 1. Enviar correos de texto plano (uno por destinatario).
-     */
-    public void enviarCorreoMasivo(List<String> destinatarios, String asunto, String mensaje) {
-        for (String email : destinatarios) {
-            SimpleMailMessage mail = new SimpleMailMessage();
-            mail.setTo(email);
-            mail.setSubject(asunto);
-            mail.setText(mensaje);
-            mailSender.send(mail);
+    public CorreoService() {
+        // Se recomienda verificar que la clave exista al iniciar el servicio
+        if (System.getenv("SENDGRID_API_KEY") == null) {
+            System.err.println("ERROR: La variable de entorno SENDGRID_API_KEY NO está configurada.");
         }
     }
-
+    
     /**
-     * 2. Enviar correos masivos usando BCC (más rápido).
+     * Envía correos masivos con personalización usando la API de SendGrid.
+     * Genera una sola llamada a la API con múltiples objetos Personalization.
      */
-    public void enviarCorreoBCC(List<String> destinatarios, String asunto, String mensaje) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setBcc(destinatarios.toArray(new String[0]));
+    public void enviarCorreoPersonalizadoSendGrid(
+            List<DestinatarioPersonalizado> listaDestinatarios, 
+            String asunto, 
+            String htmlPlantilla) throws IOException {
+
+        Mail mail = new Mail();
+        mail.setFrom(fromEmail);
         mail.setSubject(asunto);
-        mail.setText(mensaje);
-        mailSender.send(mail);
-    }
+        // Usa el contenido HTML base que contiene los marcadores {{...}}
+        mail.addContent(new Content("text/html", htmlPlantilla)); 
 
-    /**
-     * 3. Enviar correos con HTML a varios destinatarios.
-     */
-    public void enviarCorreoHTML(List<String> destinatarios, String asunto, String htmlContenido) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
+        // Itera sobre los destinatarios y crea un objeto Personalization para cada uno
+        for (DestinatarioPersonalizado destinatario : listaDestinatarios) {
+            Personalization personalization = new Personalization();
+            personalization.addTo(new Email(destinatario.getEmail()));
 
-        helper.setTo(destinatarios.toArray(new String[0]));
-        helper.setSubject(asunto);
-        helper.setText(htmlContenido, true); // true = permite HTML
+            // Añadir datos dinámicos a la personalización
+            for (Map.Entry<String, String> entry : destinatario.getDatos().entrySet()) {
+                // La clave del mapa debe coincidir con el marcador en la plantilla (ej: 'nombre' -> {{nombre}})
+                personalization.addDynamicTemplateData(entry.getKey(), entry.getValue()); 
+            }
+            mail.addPersonalization(personalization);
+        }
 
-        mailSender.send(mensaje);
-    }
+        // Configuración y envío de la solicitud HTTP
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            
+            Response response = sendGrid.api(request);
+            
+            if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+                 System.out.println("Envío masivo con SendGrid: Status " + response.getStatusCode() + ". Éxito.");
+            } else {
+                 // Lanza una excepción en caso de error de la API
+                 throw new IOException("Error de SendGrid. Status: " + response.getStatusCode() + ". Cuerpo: " + response.getBody());
+            }
 
-    /**
-     * 4. Enviar correos con HTML + adjuntos a varios destinatarios.
-     */
-    public void enviarCorreoConAdjunto(List<String> destinatarios, String asunto, String htmlContenido, File archivo) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
-
-        helper.setTo(destinatarios.toArray(new String[0]));
-        helper.setSubject(asunto);
-        helper.setText(htmlContenido, true); // true = permite HTML
-        helper.addAttachment(archivo.getName(), archivo);
-
-        mailSender.send(mensaje);
+        } catch (IOException ex) {
+            throw ex;
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.example.hippocardioo.Entity.Usuario;
 import com.example.hippocardioo.Services.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class LoginController {
@@ -19,9 +20,12 @@ public class LoginController {
     @Autowired
     private HttpSession session;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/login")
     public String showLoginForm() {
-        return "auth/login"; // Carga login.html desde templates
+        return "auth/login"; 
     }
 
     @PostMapping("/login")
@@ -33,14 +37,15 @@ public class LoginController {
 
         // ✅ Caso admin hardcodeado
         if ("admin@hippo.com".equals(email) && "1234".equals(password)) {
-            return "/admin/dashboard.html"; 
+            session.setAttribute("adminLogueado", true);
+            return "redirect:/admin/dashboard"; 
         }
 
-        // ✅ Caso usuario normal (buscar en la BD)
+        // ✅ Caso usuario normal (buscar en la BD y validar hash)
         Usuario usuario = usuarioService.findByCorreo(email);
-        if (usuario != null && usuario.getPassword().equals(password)) {
-            session.setAttribute("usuarioLogueado", usuario); // Guardar en sesión
-            return "redirect:/perfil";
+        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
+            session.setAttribute("usuarioLogueado", usuario);
+            return "redirect:/perfil"; 
         }
 
         // ❌ Si nada coincide, volvemos al login con error

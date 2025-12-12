@@ -1,18 +1,25 @@
 package com.example.hippocardioo.Services;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.hippocardioo.Entity.Usuario;
 import com.example.hippocardioo.Repository.UsuarioRepository;
 import com.example.hippocardioo.Services.DAO.idao;
 
 @Service
+@Transactional
 public class UsuarioService implements idao<Usuario, Long> {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<Usuario> getAll() {
@@ -45,9 +52,24 @@ public class UsuarioService implements idao<Usuario, Long> {
         }
     }
 
-    // ✅ Buscar usuario por correo
+    // Buscar usuario por correo
     public Usuario findByCorreo(String correo) {
         return usuarioRepository.findByCorreo(correo);
     }
-}
 
+    // ===============================
+    // Cambiar contraseña seguro
+    // ===============================
+    public boolean actualizarPassword(String correo, String nuevaPassword) {
+        Usuario user = usuarioRepository.findByCorreo(correo);
+        if (user == null) return false;
+
+        // Encriptar contraseña **solo aquí**
+        String passEncriptada = passwordEncoder.encode(nuevaPassword);
+
+        // Llamar directamente al repositorio para actualizar
+        usuarioRepository.updatePasswordById(user.getId(), passEncriptada);
+
+        return true;
+    }
+}

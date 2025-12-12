@@ -3,158 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Hipertensión</title>
-    <link rel="stylesheet" href="css/formularios.css">
-
+    <title>Evaluación de Hipertensión | Salud Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
+        /* ================================================= */
+        /* 🎨 PALETA DE COLORES (VERDE PETRÓLEO/TEAL) */
+        /* ================================================= */
+        :root {
+            /* Verde Petróleo / Teal para la salud y la estabilidad */
+            --color-primary: #00796B; /* Teal Oscuro Estándar */
+            --color-primary-dark: #004D40; /* Teal muy oscuro */
+            --color-bg-light: #e0f2f1; /* Fondo extra ligero para contraste con el Teal */
+            --color-card-bg: #ffffff;
+            --color-text-dark: #263238; /* Gris oscuro para el texto */
+            --color-text-label: #546e7a; /* Gris medio para etiquetas */
+            --color-border: #80cbc4; /* Borde sutil del Teal */
+            --color-success: #4caf50;
+            --color-error: #f44336;
+        }
+
+        /* ================================================= */
+        /* 🌎 ESTILOS GENERALES Y CONTENEDOR (TARJETA) */
+        /* ================================================= */
+
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #FAFAFA;
-            color: #333;
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
+
         .container {
-            max-width: 640px;
-            margin: 40px auto;
-            background-color: #FFFFFF;
-            padding: 28px;
-            border-radius: 10px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            max-width: 550px;
+            width: 90%;
+            background-color: var(--color-card-bg);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 
+                        0 0 0 1px rgba(0, 0, 0, 0.05); 
+            transition: all 0.5s ease;
         }
+
+        /* ================================================= */
+        /* 📝 TÍTULOS Y DESCRIPCIÓN */
+        /* ================================================= */
+
         h2 {
             text-align: center;
-            color: #D32F2F;
-            margin-bottom: 20px;
+            color: var(--color-primary-dark);
+            margin-bottom: 5px;
+            font-size: 2rem;
+            font-weight: 700;
         }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--color-text-label);
+            margin-bottom: 35px;
+            font-size: 1.05rem;
+        }
+
         form label {
-            display: block;
-            margin-top: 12px;
-            font-weight: bold;
-            color: #333;
-        }
-        form input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #DDD;
-            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text-label);
             font-size: 1rem;
         }
+
+        form label i {
+            color: var(--color-primary);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* ================================================= */
+        /* 📥 CAMPOS DE ENTRADA (INPUTS) */
+        /* ================================================= */
+
+        form input {
+            width: 100%;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background-color: var(--color-bg-light); 
+            
+            /* Neo-morfismo: Sombra interna para efecto de hundimiento */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05),
+                        inset -2px -2px 5px var(--color-card-bg);
+        }
+
         form input:focus {
             outline: none;
-            border-color: #D32F2F;
-            box-shadow: 0 0 6px rgba(211,47,47,0.25);
+            /* Foco con anillo de color Teal */
+            border: 1px solid var(--color-primary); 
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.3); 
+            background-color: var(--color-card-bg);
         }
-        button {
-            width: 100%;
-            margin-top: 18px;
-            padding: 12px;
-            background-color: #D32F2F;
-            color: #FFF;
+
+        /* ================================================= */
+        /* 🚀 BOTONES DE ACCIÓN */
+        /* ================================================= */
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button[type="submit"], .btn-volver {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 700;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color .25s ease;
-        }
-        button:hover {
-            background-color: #B71C1C;
-        }
-        .success {
-            background: #C8E6C9;
-            border: 1px solid #388E3C;
-            color: #2E7D32;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .error {
-            background: #FFEBEE;
-            border: 1px solid #F44336;
-            color: #B71C1C;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
-        .error ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* Botón Principal (Enviar) */
+        button[type="submit"] {
+            background-color: var(--color-primary);
+            color: #FFF;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Botón Secundario (Volver) */
         .btn-volver {
-    display: block;
-    text-align: center;
-    margin-top: 12px;
-    padding: 12px;
-    background-color: #757575; /* gris neutral para diferenciarlo */
-    color: #FFF;
-    border-radius: 6px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color .25s ease;
-}
+            background-color: #cfd8dc;
+            color: var(--color-text-dark);
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
 
-.btn-volver:hover {
-    background-color: #424242;
-}
+        .btn-volver:hover {
+            background-color: #b0bec5;
+            transform: translateY(-2px);
+        }
 
+        /* ================================================= */
+        /* ⚠️ MENSAJES DE ESTADO (ÉXITO Y ERROR) */
+        /* ================================================= */
+        
+        .message-box {
+             padding: 15px 20px;
+             border-radius: 10px;
+             margin-bottom: 25px;
+             font-size: 0.95rem;
+             font-weight: 500;
+             border-left: 5px solid;
+        }
 
+        .success {
+            background-color: #e8f5e9;
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .error {
+            background-color: #ffebee;
+            border-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .error ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+            list-style: disc;
+        }
     </style>
 </head>
 <body>
 <div class="container">
+    <i class="fas fa-heartbeat" style="display: block; text-align: center; font-size: 3rem; color: var(--color-primary);"></i>
     <h2>Formulario de Hipertensión</h2>
+    <p class="subtitle">Complete los campos de medición para monitorear su salud cardiovascular.</p>
 
-    <!-- Mensaje de éxito -->
-    <div th:if="${success}" class="success" th:text="${success}"></div>
-
-    
+    <div th:if="${success}" class="message-box success" th:text="${success}"></div>
 
     <form th:action="@{/formulario/hipertension}" method="post" th:object="${hipertensionForm}">
 
-        <!-- Mensajes de error -->
-        <div th:if="${#fields.hasErrors()}" class="error">
+        <div th:if="${#fields.hasErrors()}" class="message-box error">
+             <p>Por favor, corrija los siguientes errores antes de continuar:</p>
             <ul>
                 <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
             </ul>
         </div>
 
         <div>
-            <label>Nombre</label>
-            <input type="text" th:field="*{nombre}" required>
+            <label for="nombre"><i class="fas fa-user-alt"></i> Nombre Completo:</label>
+            <input type="text" th:field="*{nombre}" placeholder="Ingrese su nombre completo" required>
         </div>
 
         <div>
-            <label>Edad</label>
-            <input type="number" th:field="*{edad}" required>
+            <label for="edad"><i class="fas fa-birthday-cake"></i> Edad:</label>
+            <input type="number" th:field="*{edad}" placeholder="Ej: 55" required>
         </div>
 
         <div>
-            <label>Correo</label>
-            <input type="email" th:field="*{correo}" required>
+            <label for="correo"><i class="fas fa-envelope"></i> Correo Electrónico:</label>
+            <input type="email" th:field="*{correo}" placeholder="ejemplo@correo.com" required>
         </div>
 
         <div>
-            <label>Presión Arterial</label>
-            <input type="text" th:field="*{presionArterial}" required>
+            <label for="presionArterial"><i class="fas fa-stethoscope"></i> Presión Arterial (Ej: 130/85):</label>
+            <input type="text" th:field="*{presionArterial}" placeholder="Ingrese el valor S/D (Ej: 140/90)" required>
         </div>
 
         <div>
-            <label>Peso (kg)</label>
-            <input type="number" step="0.1" th:field="*{peso}">
+            <label for="peso"><i class="fas fa-weight"></i> Peso (kg):</label>
+            <input type="number" step="0.1" th:field="*{peso}" placeholder="Ej: 75.5">
         </div>
 
         <div>
-            <label>Altura (m)</label>
-            <input type="number" step="0.01" th:field="*{altura}">
+            <label for="altura"><i class="fas fa-ruler-vertical"></i> Altura (m):</label>
+            <input type="number" step="0.01" th:field="*{altura}" placeholder="Ej: 1.70">
         </div>
 
-        <button type="submit">Enviar</button>
-
-        <a href="/perfil" class="btn-volver">Volver a mi perfil</a>
-
+        <div class="button-group">
+            <button type="submit">
+                <i class="fas fa-paper-plane"></i> Enviar Datos
+            </button>
+            <a href="/perfil" class="btn-volver">
+                <i class="fas fa-arrow-left"></i> Volver a mi perfil
+            </a>
+        </div>
     </form>
 </div>
 </body>
