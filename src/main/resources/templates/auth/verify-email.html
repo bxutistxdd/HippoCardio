@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificación de correo</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+    <main>
+        <div class="mb-4 text-sm text-gray-600">
+            ¡Gracias por registrarte! Antes de comenzar, por favor verifica tu dirección de correo haciendo clic en el enlace que te acabamos de enviar.  
+            Si no lo recibiste, con gusto te lo enviaremos nuevamente.
+        </div>
+
+        <div th:if="${status == 'verification-link-sent'}" class="mb-4 font-medium text-sm text-green-600">
+            Se ha enviado un nuevo enlace de verificación al correo electrónico que proporcionaste durante el registro.
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+            <form method="post" action="/verify/resend">
+                <button type="submit">Reenviar correo de verificación</button>
+            </form>
+
+            <form method="post" action="/logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

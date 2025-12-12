@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hippocardio - Tu Salud Primero</title>
+    <link rel="icon" href="src\main\resources\static\css\images\Hippo.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+
+/* --- VENTANA FLOTANTE DEL CHATBOT --- */
+#chatbotWindow {
+    position: fixed;
+    right: 20px;
+    bottom: 90px; /* Posicionada encima del botón de chat (que está a 20px) */
+    width: 350px; /* Ancho cómodo para la conversación */
+    height: 450px; /* Altura de la ventana */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1045; /* Ligeramente superior a los botones flotantes */
+    display: none; /* Inicialmente oculto */
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Encabezado del chat (similar a un chat de app) */
+.chat-header {
+    background-color: #004d40; /* Verde Corporativo */
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.chat-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+.chat-header button:hover {
+    opacity: 1;
+}
+
+/* Cuerpo de la conversación */
+.chat-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto; /* Permite desplazamiento interno */
+    background-color: #f7f7f7; /* Fondo sutil para la conversación */
+}
+
+/* Área de entrada de texto */
+.chat-input {
+    padding: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+}
+.chat-input input {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin-right: 10px;
+    outline: none;
+}
+.chat-input button {
+    background-color: #d40000; /* Rojo Hippocardio para enviar */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* --- 1B & 1C: BOTONES FLOTANTES (Chat y Scroll-to-Top) --- */
+.floating-button {
+    position: fixed;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1040;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Botón de Chat (Base) */
+#floatingChatButton {
+    bottom: 20px;
+    background-color: #d40000; /* Rojo de Hippocardio */
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Botón Volver Arriba (Desplazado hacia arriba) */
+#scrollToTopButton {
+    bottom: 80px; /* Separado del botón de Chat */
+    background-color: #004d40; /* Verde Corporativo */
+    color: white;
+    font-size: 1.2rem;
+    opacity: 0; /* Inicialmente oculto */
+    visibility: hidden;
+    cursor: pointer;
+}
+
+#scrollToTopButton.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- ESTILOS PARA FOOTER (Pie de Página Estilo Cafam) --- */
+.footer-main {
+    background-color: #004d40; /* Verde Petróleo Oscuro (Color Navbar Secundaria) */
+    color: #f8f9fa; /* Texto blanco suave */
+    padding-top: 50px;
+    padding-bottom: 30px;
+}
+
+.footer-column-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #F9C013; /* Resalte Dorado/Amarillo para los títulos */
+    margin-bottom: 20px;
+}
+
+.footer-link-list {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-link-list li {
+    margin-bottom: 10px;
+}
+
+.footer-link-list a {
+    color: #f8f9fa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.footer-link-list a:hover {
+    color: #F9C013; /* Resalte dorado al pasar el mouse */
+}
+
+/* --- SECCIÓN DE ALIADOS Y BASE (La franja azul/gris inferior) --- */
+.footer-bottom-bar {
+    background-color: #333; /* Color oscuro similar a la barra superior */
+    padding: 20px 0;
+    color: #ddd;
+    font-size: 0.8rem;
+}
+
+.footer-bottom-bar .logo-partner {
+    height: 35px; /* Altura estándar para los logos */
+    margin-right: 20px;
+    filter: brightness(0) invert(1); /* Pone los logos en blanco para que se vean bien en el fondo oscuro */
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .footer-main {
+        padding-top: 30px;
+        text-align: center;
+    }
+    .footer-column-title {
+        margin-top: 20px;
+    }
+    .footer-bottom-bar .text-end {
+        text-align: center !important;
+        margin-top: 15px;
+    }
+    .footer-bottom-bar .logo-container {
+        justify-content: center !important;
+    }
+}
+
+
+/* --- ESTILOS PARA TARJETAS DE TRATAMIENTO (Carrusel de 3 items) --- */
+.treatment-card-container {
+    padding: 30px 0;
+    /* Ajuste para que las flechas se vean sobre el container */
+    position: relative; 
+}
+.treatment-card {
+    background-color: #f7f7f7; /* Fondo gris claro */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: transform 0.3s;
+}
+
+.treatment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-img {
+    width: 100%;
+    height: 200px; /* Altura fija para la imagen */
+    object-fit: cover;
+}
+
+.treatment-body {
+    padding: 20px;
+}
+
+.treatment-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #004d40; /* Verde Corporativo */
+    margin-bottom: 10px;
+}
+
+.treatment-text {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.treatment-btn {
+    color: #d40000; /* Rojo de Hippocardio */
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.2s;
+}
+
+.treatment-btn:hover {
+    border-bottom: 2px solid #d40000;
+}
+
+/* Flechas de navegación para el carrusel de tarjetas */
+.custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+.custom-arrow i {
+    color: #333;
+}
+.custom-prev { left: 0; }
+.custom-next { right: 0; }
+
+@media (min-width: 992px) {
+    .custom-prev { left: -40px; }
+    .custom-next { right: -40px; }
+}
+
+/* --- ESTILOS PARA TRATAMIENTOS (Pasos/Timeline) --- */
+.timeline-item {
+    padding: 20px 0;
+    position: relative;
+    border-left: 2px solid #ddd; /* Línea de tiempo vertical */
+    margin-left: 20px;
+}
+
+.timeline-item:last-child {
+    border-left: none; /* Quitamos la línea del último elemento */
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -24px; /* Posiciona el ícono sobre la línea */
+    top: 25px;
+    width: 40px;
+    height: 40px;
+    background-color: #d40000; /* Rojo de Hippocardio */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    box-shadow: 0 0 0 5px #f8f9fa; /* Anillo blanco para destacar */
+}
+
+.timeline-title {
+    font-size: 1.3rem;
+    color: #004d40; /* Verde Corporativo */
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.timeline-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0;
+}
+
+/* --- ESTILOS PARA CAUSAS (Tarjetas Horizontales) --- */
+.cause-card {
+    background-color: #ffffff;
+    border: 1px solid #eee;
+    border-left: 5px solid #004d40; /* Línea de acento verde */
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+}
+
+.cause-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 77, 64, 0.1); /* Sombra basada en el verde */
+}
+
+.cause-icon {
+    font-size: 2rem;
+    color: #d40000; /* Color rojo de Hippocardio para los íconos */
+    margin-right: 15px;
+}
+
+.cause-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.cause-text {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* --- TOP BAR (Similar a la barra gris superior de 'Personas | Empresas') --- */
+.top-bar {
+    background-color: #333; /* Gris muy oscuro */
+    color: #f8f9fa;
+    font-size: 0.85rem;
+    padding: 5px 0;
+}
+.top-bar a {
+    color: #f8f9fa;
+    text-decoration: none;
+    margin-right: 15px;
+    transition: color 0.2s;
+}
+.top-bar a:hover {
+    color: #F9C013; /* Resalte dorado/amarillo */
+}
+
+/* --- MAIN NAVBAR (Fondo blanco, Logo, Botón Virtual) --- */
+.navbar-main {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee; /* Línea de división sutil */
+    padding: 10px 0;
+}
+.navbar-main .nav-link {
+    color: #333 !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-right: 20px;
+}
+.navbar-main .nav-link:hover {
+    color: #004d40 !important; /* Hover Verde Corporativo */
+}
+/* Botón Destacado 'Chat Hippo' (Similar a 'Colsubsidio virtual') */
+.btn-virtual {
+    background-color: #F9C013; /* Dorado/Amarillo brillante */
+    color: #333;
+    font-weight: 700;
+    border-radius: 5px;
+    padding: 8px 20px;
+    transition: background-color 0.2s;
+}
+.btn-virtual:hover {
+    background-color: #e5b00c;
+    color: #333;
+}
+
+/* --- SECONDARY NAVBAR (Menú de Categorías, Verde Petróleo) --- */
+.navbar-secondary {
+    background-color: #004d40; /* Verde Petróleo Oscuro */
+    color: white;
+}
+.navbar-secondary .nav-link,
+.navbar-secondary .dropdown-toggle {
+    color: white !important;
+    font-weight: 400;
+    font-size: 0.9rem;
+    margin-right: 15px;
+    padding: 10px 0 !important;
+}
+.navbar-secondary .nav-link:hover,
+.navbar-secondary .dropdown-toggle:hover {
+    color: #FFC107 !important;
+}
+/* Estilo del menú desplegable */
+.navbar-secondary .dropdown-menu {
+    background-color: #004d40;
+    border: none;
+    border-top: 3px solid #F9C013; /* Línea dorada para separar */
+    border-radius: 0;
+}
+.navbar-secondary .dropdown-item {
+    color: white !important;
+    font-size: 0.9rem;
+}
+.navbar-secondary .dropdown-item:hover {
+    background-color: #00695c;
+}
+        /* ESTILOS DEL CARRUSEL TIPO HÉROE (Estilo Colsubsidio) */
+.hero-section {
+    padding: 60px 0;
+}
+
+.hero-card {
+    /* El degradado exacto que me pediste */
+    background: linear-gradient(83deg, rgb(255, 253, 244) 0%, rgb(242, 202, 70) 100%);
+    border-radius: 24px; /* Bordes muy redondeados */
+    overflow: hidden; /* Para que la imagen respete el borde redondeado */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.hero-content {
+    padding: 3rem 4rem; /* Espaciado interno generoso */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.hero-subtitle {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.hero-title {
+    font-size: 2.5rem; /* Título grande */
+    font-weight: 700;
+    color: #333; /* Gris oscuro para contraste con el amarillo */
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.hero-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* Ajuste de la imagen para que llene el lado derecho */
+.hero-img-container {
+    height: 100%;
+    min-height: 450px; /* Altura mínima */
+}
+
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Recorta la imagen para llenar el espacio sin deformar */
+}
+
+/* Botones de control del carrusel (Flechas) */
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;
+    opacity: 0.5;
+}
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    /* Invertimos el color de las flechas a negro porque el fondo es claro */
+    filter: invert(100%); 
+    background-color: rgba(255, 255, 255, 0.5); /* Circulo sutil */
+    border-radius: 50%;
+    padding: 20px;
+    background-size: 50%;
+}
+.carousel-control-prev:hover, .carousel-control-next:hover {
+    opacity: 1;
+}
+
+/* Botón de acción (Estilo "Conoce más") */
+.btn-hero {
+    background-color: transparent;
+    border: 2px solid #333;
+    color: #333;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    width: fit-content;
+    transition: all 0.3s ease;
+}
+
+.btn-hero:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Responsive: En móviles la imagen va arriba o abajo */
+@media (max-width: 991px) {
+    .hero-content { padding: 2rem; }
+    .hero-img-container { min-height: 250px; }
+}
+        /* ESTILOS SECCIÓN SERVICIOS DESTACADOS */
+.service-link {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.service-link:hover {
+    background-color: #f8f9fa; /* Fondo gris suave al pasar mouse */
+}
+
+.service-link h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #004d40; /* Verde Corporativo */
+}
+
+.service-link p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+
+/* El círculo con la flecha */
+.arrow-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    color: #004d40;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.service-link:hover .arrow-icon {
+    background-color: #004d40;
+    color: white;
+    border-color: #004d40;
+}
+
+/* Líneas divisorias verticales sutiles para el grid */
+.border-end-md {
+    border-right: 1px solid #eee;
+}
+@media (max-width: 768px) {
+    .border-end-md { border-right: none; } /* Quitar bordes en móvil */
+}
+        /* Tipografía y Fondo General */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F4F6F8; /* Gris muy suave, casi blanco */
+            color: #333;
+        }
+
+        /* BARRA DE NAVEGACIÓN (Estilo Colsubsidio) */
+        .navbar-custom {
+            background-color: #004d40; /* Verde Petróleo Oscuro */
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: white !important;
+        }
+        .brand-hippo { color: #d40000; } /* Rojo de tu marca */
+        .brand-cardio { color: #ffffff; }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            margin-right: 15px;
+        }
+        .nav-link:hover { color: #FFC107 !important; }
+
+        /* Botones del Menú */
+        .btn-login {
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 20px;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            background-color: white;
+            color: #004d40;
+        }
+        .btn-register {
+            background-color: #d40000; /* Rojo Marca para destacar */
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 20px;
+        }
+        .btn-register:hover { background-color: #b71c1c; color: white; }
+
+        /* CAROUSEL */
+        .carousel-item img {
+            height: 500px; /* Altura fija */
+            object-fit: cover; /* Recorta la imagen para que no se deforme */
+            filter: brightness(90%); /* Un poco oscuro para que resalte texto si lo hubiera */
+        }
+
+        /* SECCIONES Y TÍTULOS */
+        section { padding: 60px 0; }
+        
+        .section-title {
+            color: #004d40; /* Verde Corporativo */
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 2rem;
+            text-align: center;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* TARJETAS (CARDS) - Limpias y Blancas */
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra suave */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%; /* Para que todas tengan la misma altura */
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-body { padding: 2rem; }
+
+        .card-title {
+            color: #004d40;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .card-text {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Iconos decorativos en tarjetas (Opcional) */
+        .icon-box {
+            font-size: 2rem;
+            color: #d40000;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="top-bar d-none d-lg-block">
+    <div class="container-fluid container-xl">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <a href="#">Pacientes</a>
+                <a href="#">Profesionales</a>
+            </div>
+            <div class="col-6 text-end">
+                <a href="#"><i class="bi bi-person"></i> Personalizar</a>
+                <a href="#"><i class="bi bi-search"></i> Buscar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light navbar-main">
+    <div class="container-fluid container-xl">
+        <a class="navbar-brand me-5" href="#">
+            <span style="color: #004d40;">HIPPO</span><span style="color: #d40000; font-weight: bold;">CARDIO</span>
+        </a>
+
+        <div class="collapse navbar-collapse" id="navbarNavMain">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Tu historial</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Preguntas Frecuentes</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contáctanos</a></li>
+            </ul>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <a class="nav-link d-none d-lg-block me-3" th:href="@{/login}">Iniciar Sesión</a>
+            
+            <a class="btn btn-virtual" href="#" th:href="@{/chat}">
+                <i class="bi bi-chat-dots-fill"></i> Chat Hippo
+            </a>
+        </div>
+    </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-secondary">
+    <div class="container-fluid container-xl">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavSecondary" aria-controls="navbarNavSecondary" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\'rgba(255, 255, 255, 0.9)\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E');"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavSecondary">
+            <ul class="navbar-nav w-100 justify-content-between">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Salud
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/perfil">Mi Perfil de Riesgo</a></li>
+                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/alerta">Alertas y Notificaciones</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Prevención
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/dietas">Planes de Nutrición</a></li>
+                        <li><a class="dropdown-item" href="/ejercicio">Rutinas de Ejercicio</a></li>
+                        <li><a class="dropdown-item" href="/habitos">Hábitos Saludables</a></li>
+                    </ul>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="#informacion-detallada">Enfermedades Crónicas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog">Blog y Noticias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ayuda">Ayuda en Línea</a>
+                </li>
+                <li class="nav-item d-none d-lg-block">
+                    <a class="nav-link" href="#" style="visibility: hidden;">D</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <div id="carouselHealth" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselHealth" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#carouselHealth" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselHealth" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#carouselHealth" data-bs-slide-to="3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://noticias.unsl.edu.ar/wp-content/uploads/2021/04/D%C3%ADa-mundial-de-la-salud.jpeg" class="d-block w-100" alt="Salud 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://imagenes.20minutos.es/files/image_1920_1080/uploads/imagenes/2023/05/22/alimentos-saludables-y-deporte.jpeg" class="d-block w-100" alt="Salud 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://www.drdiazbermudez.com/cuales-son-las-ets-mas-comunes-y-como-prevenirlas_img193176t1.jpg" class="d-block w-100" alt="Salud 3">
+            </div>
+            <div class="carousel-item">
+                <img src="https://www.artiemhotels.com/uploads/c391546e-6280-4324-a195-e056a018e5eb/c391546e-6280-4324-a195-e056a018e5eb.png" class="d-block w-100" alt="Salud 4">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselHealth" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselHealth" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+<section class="py-5 bg-white border-bottom">
+    <div class="container"> <div class="row align-items-center">
+            
+            <div class="col-12 col-lg-3 mb-4 mb-lg-0">
+                <h2 class="fw-bold mb-3" style="color: #6c757d;">Servicios destacados</h2>
+                <p class="text-muted">
+                    Encuentra soluciones integrales que se ajustan a tus necesidades de salud y prevención.
+                </p>
+            </div>
+
+            <div class="col-12 col-lg-9">
+                <div class="row align-items-center">
+                    
+                    <div class="col-md-4 d-none d-md-block"> <img src="https://cms.colsubsidio.com/sites/default/files/2024-11/Mujer-sonriendo_30.webp" 
+                             alt="Bienestar Hippocardio"
+                             class="img-fluid rounded-4 shadow-sm"
+                             style="object-fit: cover; height: 100%;">
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <div class="row g-4"> <div class="col-6 border-end-md">
+                                <a href="/diabetes" class="service-link">
+                                    <h3>Diabetes</h3>
+                                    <p>Monitoreo y control de glucosa.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                            <div class="col-6">
+                                <a href="/obesidad" class="service-link">
+                                    <h3>Obesidad</h3>
+                                    <p>Calculadora de IMC y planes de dieta.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                            <div class="col-6 border-end-md">
+                                <a href="/hipertension" class="service-link">
+                                    <h3>Hipertensión</h3>
+                                    <p>Registro de presión arterial diario.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                            <div class="col-6">
+                                <a href="/ets" class="service-link">
+                                    <h3>ETS</h3>
+                                    <p>Información y prevención segura.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                            <div class="col-6 border-end-md">
+                                <a href="/chat" class="service-link">
+                                    <h3>Chat Hippo</h3>
+                                    <p>Asistente virtual con IA 24/7.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                            <div class="col-6">
+                                <a href="/historial" class="service-link">
+                                    <h3>Historial</h3>
+                                    <p>Revisa tus resultados anteriores.</p>
+                                    <span class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+    
+</section>
+    <main>
+        
+        <section id="enfermedades">
+            <div class="container">
+                <h3 class="section-title">Enfermedades</h3>
+                <h6 class="section-subtitle">Conoce los riesgos principales que analizamos en Hippocardio</h6>
+                
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card card-custom">
+                            <div class="card-body text-center">
+                                <i class="bi bi-droplet-half icon-box"></i>
+                                <h5 class="card-title">Diabetes</h5>
+                                <p class="card-text">Enfermedad crónica caracterizada por niveles elevados de glucosa en la sangre debido a problemas con la insulina.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card card-custom">
+                            <div class="card-body text-center">
+                                <i class="bi bi-person-bounding-box icon-box"></i>
+                                <h5 class="card-title">Obesidad</h5>
+                                <p class="card-text">Exceso de grasa corporal que afecta la salud. Un IMC superior a 30 se considera un indicador de riesgo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card card-custom">
+                            <div class="card-body text-center">
+                                <i class="bi bi-activity icon-box"></i>
+                                <h5 class="card-title">Hipertensión</h5>
+                                <p class="card-text">Fuerza excesiva de la sangre contra las arterias. Es un factor de riesgo silencioso para problemas cardíacos.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card card-custom">
+                            <div class="card-body text-center">
+                                <i class="bi bi-virus icon-box"></i>
+                                <h5 class="card-title">ETS</h5>
+                                <p class="card-text">Infecciones transmitidas principalmente por contacto sexual. La prevención y detección temprana son claves.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+<section id="informacion-detallada" class="hero-section">
+    <div class="container">
+        
+        <div class="text-center mb-5">
+             <h2 class="fw-bold" style="color: #004d40;">Información de Salud</h2>
+             <p class="text-muted">Desliza para conocer a fondo las condiciones que analizamos</p>
+        </div>
+
+        <div id="carouselEnfermedades" class="carousel slide hero-card" data-bs-ride="carousel">
+            
+            <div class="carousel-inner">
+                
+                <div class="carousel-item active">
+                    <div class="row g-0"> <div class="col-lg-6">
+                            <div class="hero-content">
+                                <span class="hero-subtitle">Enfermedades Crónicas</span>
+                                <h2 class="hero-title">Diabetes Mellitus</h2>
+                                <p class="hero-text">
+                                    Enfermedad crónica caracterizada por niveles elevados de glucosa en la sangre. 
+                                    Ocurre cuando el páncreas no produce suficiente insulina o el organismo no la utiliza eficazmente.
+                                </p>
+                                <a href="/diabetes" class="btn btn-hero">Ver Causas y Tratamientos</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 hero-img-container">
+                            <img src="https://img.freepik.com/foto-gratis/vista-superior-arreglo-dia-mundial-diabetes-espacio-copia_23-2148705373.jpg" class="hero-img" alt="Diabetes Info">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="hero-content">
+                                <span class="hero-subtitle">Control de Peso</span>
+                                <h2 class="hero-title">Obesidad y Sobrepeso</h2>
+                                <p class="hero-text">
+                                    Acumulación anormal o excesiva de grasa que puede ser perjudicial para la salud.
+                                    Es un factor de riesgo importante para diabetes y enfermedades cardíacas. Un IMC superior a 30 indica obesidad.
+                                </p>
+                                <a href="/obesidad" class="btn btn-hero">Calcular mi IMC</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 hero-img-container">
+                            <img src="https://img.freepik.com/foto-gratis/cinta-metrica-plato-vacio-verduras_23-2147926102.jpg" class="hero-img" alt="Obesidad Info">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="hero-content">
+                                <span class="hero-subtitle">Salud Cardiovascular</span>
+                                <h2 class="hero-title">Hipertensión Arterial</h2>
+                                <p class="hero-text">
+                                    Conocida como el "asesino silencioso", es la fuerza excesiva de la sangre contra las paredes de las arterias.
+                                    A menudo no presenta síntomas pero puede causar daños graves al corazón.
+                                </p>
+                                <a href="/hipertension" class="btn btn-hero">Cómo prevenirla</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 hero-img-container">
+                            <img src="https://img.freepik.com/foto-gratis/mano-medico-sosteniendo-corazon-rojo_23-2148016428.jpg" class="hero-img" alt="Hipertensión Info">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="hero-content">
+                                <span class="hero-subtitle">Salud Sexual</span>
+                                <h2 class="hero-title">ETS</h2>
+                                <p class="hero-text">
+                                    Las Enfermedades de Transmisión Sexual son infecciones transmitidas por contacto sexual.
+                                    La educación, el uso de protección y los chequeos regulares son la mejor defensa.
+                                </p>
+                                <a href="/ets" class="btn btn-hero">Saber más</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 hero-img-container">
+                            <img src="https://img.freepik.com/foto-gratis/pareja-tomados-mano-primer-plano_23-2149339399.jpg" class="hero-img" alt="ETS Info">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselEnfermedades" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselEnfermedades" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+
+        <section id="causas" class="py-5 bg-light">
+    <div class="container container-xl">
+        <h2 class="text-center fw-bold mb-3" style="color: #004d40;">Causas Principales de Riesgo</h2>
+        <p class="text-center text-muted mb-5">Conoce los factores que más influyen en el desarrollo de estas condiciones.</p>
+
+        <div class="row g-4">
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-egg-fried"></i></div>
+                    <div>
+                        <div class="cause-title">Dieta Inadecuada</div>
+                        <p class="cause-text">Consumo excesivo de azúcares refinados, grasas saturadas y sodio. Factor clave en Obesidad y Diabetes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-person-x-fill"></i></div>
+                    <div>
+                        <div class="cause-title">Falta de Actividad</div>
+                        <p class="cause-text">La inactividad física disminuye el metabolismo y la sensibilidad a la insulina, contribuyendo a la Hipertensión.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-people-fill"></i></div>
+                    <div>
+                        <div class="cause-title">Genética y Herencia</div>
+                        <p class="cause-text">Tener familiares directos con la enfermedad aumenta significativamente la probabilidad de desarrollarla.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-smoke"></i></div>
+                    <div>
+                        <div class="cause-title">Consumo de Tabaco</div>
+                        <p class="cause-text">El tabaquismo daña las paredes de los vasos sanguíneos, siendo un factor de riesgo directo para la Hipertensión.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-headset"></i></div>
+                    <div>
+                        <div class="cause-title">Estrés y Sueño Pobre</div>
+                        <p class="cause-text">El estrés prolongado y la falta de sueño de calidad impactan negativamente en los niveles hormonales.</p>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="col-md-6 col-lg-4">
+                <div class="cause-card d-flex align-items-start">
+                    <div class="cause-icon"><i class="bi bi-cup-straw"></i></div>
+                    <div>
+                        <div class="cause-title">Alto Consumo de Alcohol</div>
+                        <p class="cause-text">El abuso de alcohol contribuye a la obesidad, la presión arterial alta y otros problemas metabólicos.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="tratamiento" class="py-5 bg-white">
+    <div class="container container-xl treatment-card-container">
+        <h2 class="fw-bold mb-3" style="color: #333; font-size: 2.5rem;">Manejo y Tratamiento</h2>
+        <p class="text-muted mb-5">
+            Sigue los pilares fundamentales de Hippocardio para controlar y mejorar tu salud a largo plazo.
+        </p>
+
+        <div class="row g-4">
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="treatment-card">
+                    <img src="https://img.freepik.com/foto-gratis/monitor-presion-arterial-escritorio_23-2148119020.jpg" 
+                         alt="Monitoreo" class="treatment-img">
+                    <div class="treatment-body">
+                        <div class="treatment-title">1. Monitoreo Activo</div>
+                        <p class="treatment-text">
+                            Utiliza la app para registrar diariamente tu presión, glucosa y peso. El seguimiento constante es vital para tus ajustes médicos.
+                        </p>
+                        <a href="/monitoreo" class="treatment-btn">EMPEZAR AHORA <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="treatment-card">
+                    <img src="https://img.freepik.com/foto-gratis/alimentos-nutricionales-para-corazon-saludable_23-2148560010.jpg" 
+                         alt="Dieta" class="treatment-img">
+                    <div class="treatment-body">
+                        <div class="treatment-title">2. Estilo de Vida</div>
+                        <p class="treatment-text">
+                            Implementa tu plan de nutrición personalizado y mantén una rutina de ejercicio constante, clave para el control metabólico.
+                        </p>
+                        <a href="/estilodevida" class="treatment-btn">VER PLANES <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="treatment-card">
+                    <img src="https://img.freepik.com/foto-gratis/pastillas-botella-escritorio_23-2148507205.jpg" 
+                         alt="Medicamentos" class="treatment-img">
+                    <div class="treatment-body">
+                        <div class="treatment-title">3. Adherencia Médica</div>
+                        <p class="treatment-text">
+                            Toma todos los medicamentos recetados con precisión. Nunca suspendas la medicación sin la consulta y guía de tu médico.
+                        </p>
+                        <a href="/adherencia" class="treatment-btn">GUÍA DE MEDICACIÓN <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        </div>
+</section>
+
+    </div>
+</section>
+    </main>
+
+    <section class="py-5" style="background-color: #004d40;">
+    <div class="container text-center text-white">
+        <h2 class="display-4 fw-bold mb-3">Toma el Control de tu Salud Cardiovascular.</h2>
+        <p class="lead mb-4">Regístrate hoy para obtener tu perfil de riesgo personalizado y comienza tu plan de monitoreo.</p>
+        
+        <a href="/login" class="btn btn-lg btn-warning fw-bold text-dark shadow-lg">
+             ¡Comenzar Monitoreo Ahora!
+        </a>
+    </div>
+</section>
+
+    </div>
+</section>
+
+<footer class="footer-main">
+    <div class="container container-xl">
+        <div class="row">
+            
+            <div class="col-6 col-md-3 mb-4">
+                <h4 class="footer-column-title">Nosotros</h4>
+                <ul class="footer-link-list">
+                    <li><a href="/que-es-hippocardio">Qué es Hippocardio</a></li>
+                    <li><a href="/trabaja">Trabaja con Nosotros</a></li>
+                    <li><a href="/experiencia">Nuestra Experiencia</a></li>
+                    <li><a href="/prensa">Sala de Prensa</a></li>
+                    <li><a href="/contacto">Canales de Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 mb-4">
+                <h4 class="footer-column-title">Legales</h4>
+                <ul class="footer-link-list">
+                    <li><a href="/politica-datos">Política de Datos Personales</a></li>
+                    <li><a href="/terminos">Términos y Condiciones</a></li>
+                    <li><a href="/transparencia">Transparencia y Acceso a la Información</a></li>
+                    <li><a href="/notificaciones">Notificaciones Judiciales</a></li>
+                    <li><a href="/tutelas">Tutelas: tutelas@hippocardio.com</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 mb-4">
+                <h4 class="footer-column-title">Servicios</h4>
+                <ul class="footer-link-list">
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/monitoreo">Monitoreo Activo</a></li>
+                    <li><a href="/planes-dieta">Planes de Dieta</a></li>
+                    <li><a href="/rutinas">Rutinas de Ejercicio</a></li>
+                    <li><a href="/blog">Blog de Salud</a></li>
+                    <li><a href="/mapa-sitio">Mapa del Sitio</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 mb-4">
+                <h4 class="footer-column-title">Síguenos</h4>
+                <ul class="footer-link-list d-flex justify-content-md-start justify-content-center">
+                    <li><a href="#"><i class="bi bi-facebook fs-4 me-3"></i></a></li>
+                    <li><a href="#"><i class="bi bi-twitter fs-4 me-3"></i></a></li>
+                    <li><a href="#"><i class="bi bi-instagram fs-4 me-3"></i></a></li>
+                    <li><a href="#"><i class="bi bi-linkedin fs-4"></i></a></li>
+                </ul>
+                <h4 class="footer-column-title mt-4">Preguntas Frecuentes</h4>
+                <ul class="footer-link-list">
+                     <li><a href="/faqs">Ir a FAQ</a></li>
+                     <li><a href="/chat">Chat con Asesor</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<div class="footer-bottom-bar">
+    <div class="container container-xl">
+        <div class="row align-items-center">
+            
+            <div class="col-12 col-md-8 logo-container d-flex flex-wrap justify-content-md-start justify-content-center mb-3 mb-md-0">
+                <span class="text-white me-3 d-none d-md-block">Aliados:</span>
+                <img src="https://via.placeholder.com/100x35/00695c/FFFFFF?text=EPS+Salud" alt="Logo EPS" class="logo-partner">
+                <img src="https://via.placeholder.com/100x35/00695c/FFFFFF?text=Univ.+Medica" alt="Logo Universidad" class="logo-partner">
+                <img src="https://via.placeholder.com/100x35/00695c/FFFFFF?text=Aseguradora" alt="Logo Aseguradora" class="logo-partner">
+            </div>
+
+            <div class="col-12 col-md-4 text-end">
+                &copy; 2025 Hippocardio. Todos los derechos reservados.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div id="chatbotWindow">
+        
+        <div class="chat-header">
+            <span>🤖 HippoBot de Salud</span>
+            <button id="closeChatBtn" aria-label="Cerrar Chat"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="chat-body" id="chatMessages">
+            <div class="alert alert-info" role="alert">
+                ¡Hola! Soy HippoBot. Estoy aquí para resolver tus dudas sobre diabetes, hipertensión y obesidad. ¿En qué puedo ayudarte hoy?
+            </div>
+            </div>
+
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje">
+            <button id="sendMessageBtn" title="Enviar Mensaje"><i class="bi bi-send-fill"></i></button>
+        </div>
+
+    </div>
+
+    <button id="floatingChatButton" class="floating-button" title="Abrir Chatbot Hippocardio" onclick="toggleChatWindow()">
+        <i class="bi bi-chat-dots-fill"></i>
+    </button>
+    
+    <button id="scrollToTopButton" class="floating-button" title="Volver arriba">
+        <i class="bi bi-chevron-up"></i>
+    </button>
+    
+    <script>
+        // --- LÓGICA DEL CHATBOT (Apertura y Cierre) ---
+        const chatWindow = document.getElementById('chatbotWindow');
+        const floatingButton = document.getElementById('floatingChatButton');
+        const closeButton = document.getElementById('closeChatBtn');
+        
+        // Función global para abrir y cerrar la ventana (llamada por el onclick)
+        function toggleChatWindow() {
+            // La ventana está oculta si display es 'none' o una cadena vacía
+            if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+                chatWindow.style.display = 'flex';
+                floatingButton.innerHTML = '<i class="bi bi-x-lg"></i>'; // Icono de cierre (X)
+            } else {
+                chatWindow.style.display = 'none';
+                floatingButton.innerHTML = '<i class="bi bi-chat-dots-fill"></i>'; // Icono de chat
+            }
+        }
+        
+        // Asignar el cierre al botón 'X' dentro de la ventana del chat
+        if (closeButton) {
+            closeButton.addEventListener('click', toggleChatWindow);
+        }
+
+        // --- LÓGICA DEL BOTÓN VOLVER ARRIBA ---
+        const topButton = document.getElementById('scrollToTopButton');
+        
+        // 1. Mostrar/Ocultar el botón al hacer scroll (Aparece después de 300px de scroll)
+        window.onscroll = function() {
+            if (topButton) {
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    topButton.classList.add('show');
+                } else {
+                    topButton.classList.remove('show');
+                }
+            }
+        };
+        
+        // 2. Función para ir arriba al hacer clic
+        if (topButton) {
+            topButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth' 
+                });
+            });
+        }
+
+        // --- LÓGICA DE ENVÍO DE MENSAJES (Estructura para el futuro) ---
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendMessageBtn');
+        
+        function sendMessage() {
+            // ... (Tu lógica de envío de mensajes)
+            const message = chatInput.value.trim();
+            if (message === '') return;
+            console.log("Mensaje enviado: " + message);
+            chatInput.value = ''; 
+        }
+
+        if (sendButton) sendButton.addEventListener('click', sendMessage);
+        if (chatInput) chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+    
+    </body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Diabetes | Salud Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* ================================================= */
+        /* 🎨 PALETA DE COLORES (VERDE PETRÓLEO/TEAL) */
+        /* ================================================= */
+        :root {
+            /* Verde Petróleo / Teal para la salud y la sofisticación */
+            --color-primary: #00796B; /* Teal Oscuro Estándar */
+            --color-primary-dark: #004D40; /* Teal muy oscuro */
+            --color-bg-light: #e0f2f1; /* Fondo extra ligero para contraste con el Teal */
+            --color-card-bg: #ffffff;
+            --color-text-dark: #263238; /* Gris oscuro para el texto */
+            --color-text-label: #546e7a; /* Gris medio para etiquetas */
+            --color-border: #80cbc4; /* Borde sutil del Teal */
+            --color-success: #4caf50;
+            --color-error: #f44336;
+        }
+
+        /* ================================================= */
+        /* 🌎 ESTILOS GENERALES Y CONTENEDOR (TARJETA) */
+        /* ================================================= */
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 90%;
+            background-color: var(--color-card-bg);
+            padding: 50px 40px;
+            border-radius: 20px;
+            /* Sombra sutil tipo Neo-morfismo para dar flotabilidad */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 
+                        0 0 0 1px rgba(0, 0, 0, 0.05); 
+            transition: all 0.5s ease;
+        }
+
+        /* ================================================= */
+        /* 📝 TÍTULOS Y DESCRIPCIÓN */
+        /* ================================================= */
+
+        h2 {
+            text-align: center;
+            color: var(--color-primary-dark);
+            margin-bottom: 5px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--color-text-label);
+            margin-bottom: 35px;
+            font-size: 1.05rem;
+        }
+
+        form label {
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text-label);
+            font-size: 1rem;
+        }
+
+        form label i {
+            color: var(--color-primary); /* Íconos en Teal */
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* ================================================= */
+        /* 📥 CAMPOS DE ENTRADA (INPUTS y SELECTS) */
+        /* ================================================= */
+
+        form input, 
+        form select {
+            width: 100%;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background-color: var(--color-bg-light); 
+            
+            /* Sombra interna sutil para el efecto de hundimiento (Neo-mórfico) */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05),
+                        inset -2px -2px 5px var(--color-card-bg);
+        }
+
+        form input:focus,
+        form select:focus {
+            outline: none;
+            /* Anillo de foco en Verde Petróleo */
+            border: 1px solid var(--color-primary); 
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.3); 
+            background-color: var(--color-card-bg);
+        }
+        
+        form select {
+            /* Estilo específico para SELECT */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            /* Ícono de flecha en el color primario */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23004D40'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 1em;
+        }
+
+
+        /* ================================================= */
+        /* 🚀 BOTONES DE ACCIÓN */
+        /* ================================================= */
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button[type="submit"], .btn-volver {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Botón Principal (Enviar) */
+        button[type="submit"] {
+            background-color: var(--color-primary);
+            color: #FFF;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Botón Secundario (Volver) */
+        .btn-volver {
+            background-color: #cfd8dc;
+            color: var(--color-text-dark);
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-volver:hover {
+            background-color: #b0bec5;
+            transform: translateY(-2px);
+        }
+
+        /* ================================================= */
+        /* ⚠️ MENSAJES DE ESTADO (ÉXITO Y ERROR) */
+        /* ================================================= */
+        
+        .message-box {
+             padding: 15px 20px;
+             border-radius: 10px;
+             margin-bottom: 25px;
+             font-size: 0.95rem;
+             font-weight: 500;
+             border-left: 5px solid;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .error {
+            background-color: #ffebee;
+            border-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .error ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+            list-style: disc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <i class="fas fa-heartbeat" style="display: block; text-align: center; font-size: 3rem; color: var(--color-primary);"></i>
+    <h2>Evaluación de Diabetes</h2>
+    <p class="subtitle">Ingrese la información requerida para generar una predicción de salud precisa.</p>
+
+    <div th:if="${success}" class="message-box success" th:text="${success}"></div>
+
+    <form th:action="@{/formulario/diabetes}" method="post" th:object="${diabetesForm}">
+
+        <div th:if="${#fields.hasErrors('*')}" class="message-box error">
+            <p>Por favor, corrija los siguientes errores antes de continuar:</p>
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+
+        <label for="nombre"><i class="fas fa-user-alt"></i> Nombre Completo:</label>
+        <input type="text" th:field="*{nombre}" placeholder="Ej: Laura Martínez" required>
+
+        <label for="edad"><i class="fas fa-birthday-cake"></i> Edad:</label>
+        <input type="number" th:field="*{edad}" placeholder="Ej: 35" required>
+
+        <label for="correo"><i class="fas fa-envelope"></i> Correo Electrónico:</label>
+        <input type="email" th:field="*{correo}" placeholder="contacto@ejemplo.com" required>
+
+        <label for="tipo_diabetes"><i class="fas fa-syringe"></i> Tipo de Diabetes Diagnosticada:</label>
+        <select th:field="*{tipoDiabetes}" required>
+            <option value="">Selecciona un tipo</option>
+            <option value="Tipo 1">Tipo 1</option>
+            <option value="Tipo 2">Tipo 2</option>
+            <option value="Gestacional">Gestacional</option>
+        </select>
+
+        <div class="button-group">
+            <button type="submit">
+                <i class="fas fa-chart-line"></i> Generar Predicción
+            </button>
+            <a href="/perfil" class="btn-volver">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>
