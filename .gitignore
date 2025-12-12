@@ -1,5 +1,4 @@
 HELP.md
-target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -33,3 +32,4 @@ build/
 .vscode/
 "sendgrid.env" 
 sendgrid.env 
+!target/hippocardioo-0.0.1-SNAPSHOT.jar
